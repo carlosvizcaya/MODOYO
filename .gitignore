@@ -40,3 +40,10 @@ yarn-error.*
 /ios
 /android
 .env
+
+# testing
+coverage/
+
+# auto-generated document previews
+*.pdf
+*.docx

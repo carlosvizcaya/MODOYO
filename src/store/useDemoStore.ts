@@ -7,6 +7,7 @@
 import { create } from 'zustand';
 import { mockUser, mockGoals, avatarOptions } from '../data/mockData';
 import type { UserGoal } from '../types';
+import { addXp } from '../utils/xp';
 
 export type Screen =
   | 'welcome'        // Landing / selección de rol
@@ -76,20 +77,10 @@ export const useDemoStore = create<DemoState>((set, get) => ({
 
   addXP: (amount) => {
     const state = get();
-    let newXP = state.xp + amount;
-    let newLevel = state.level;
-    let leveledUp = false;
-    let threshold = state.xpToNextLevel;
-
-    while (newXP >= threshold) {
-      newXP -= threshold;
-      newLevel += 1;
-      leveledUp = true;
-      threshold = Math.round(threshold * 1.2); // umbral creciente
-    }
-
-    set({ xp: newXP, level: newLevel, xpToNextLevel: threshold });
-    return { leveledUp, newLevel };
+    // Usa la lógica pura y testeada (US-003, src/utils/xp.ts).
+    const { xp, level, xpToNextLevel, leveledUp } = addXp(state.xp, state.level, amount);
+    set({ xp, level, xpToNextLevel });
+    return { leveledUp, newLevel: level };
   },
 
   goals: mockGoals,

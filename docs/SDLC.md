@@ -126,6 +126,78 @@ Toda decisión de arquitectura significativa (elección de tecnología, patrón,
 
 > El registro completo de ADRs vive en `docs/decisions/` con su índice en `docs/decisions/README.md`.
 
+## 6. Test-Driven Development (TDD) y Estrategia de Testing
+
+En MODO YO adoptamos **Test-Driven Development (TDD)** como práctica obligatoria: **antes de escribir el código de una funcionalidad, deben existir sus tests**, derivados directamente de la historia de usuario y sus Criterios de Aceptación. Los Criterios de Aceptación de cada `US-XXX` son la fuente de verdad para definir los casos de prueba.
+
+### 6.1 Principio Fundamental
+> **Ninguna historia de usuario se considera "En progreso" hasta que sus tests estén escritos, y no se considera "Completada" hasta que todos sus tests pasen (verde).**
+
+Cada Criterio de Aceptación de una historia de usuario **debe** tener al menos un test automatizado que lo verifique. La trazabilidad es bidireccional: del criterio al test y del test al criterio.
+
+### 6.2 Ciclo Red-Green-Refactor
+Para cada historia de usuario se sigue el ciclo TDD clásico:
+
+1.  **🔴 Red** — Escribir un test que describa el comportamiento esperado (derivado de un Criterio de Aceptación). El test **debe fallar** inicialmente porque el código aún no existe.
+2.  **🟢 Green** — Escribir el código mínimo necesario para que el test pase.
+3.  **🔵 Refactor** — Mejorar el código manteniendo todos los tests en verde.
+
+### 6.3 Pirámide de Testing
+La cobertura se organiza en tres niveles, priorizando la base de la pirámide:
+
+| Nivel | Alcance | Herramienta | Ejemplos en MODO YO |
+|-------|---------|-------------|---------------------|
+| **Unit** (base) | Lógica pura y aislada | Jest + ts-jest | Cálculo de XP y niveles, lógica de rachas, cálculo del Mapa de Poder (EFEF), reducers de Zustand |
+| **Integration** (medio) | Interacción entre módulos | Jest + React Native Testing Library + Supabase local | Stores + persistencia AsyncStorage, cliente Supabase + políticas RLS, sincronización offline |
+| **Component / E2E** (cima) | Flujos de usuario completos | React Native Testing Library / Maestro / Detox | Onboarding completo, completar ejercicio y ganar XP, marcar meta lograda |
+
+**Regla de proporción:** ~70% unit, ~20% integración, ~10% E2E.
+
+### 6.4 Convenciones de Testing
+-   **Ubicación:** Tests unitarios y de componente junto al código en `__tests__/` o con sufijo `*.test.ts(x)`. Tests E2E en `e2e/`.
+-   **Nomenclatura:** El nombre del test referencia la historia y el criterio. Ejemplo:
+    ```ts
+    // US-003 · Criterio 2: al completar un ejercicio se asigna el XP correspondiente
+    describe('US-003 · Entrenamiento y XP', () => {
+      it('asigna 50 XP al completar el ejercicio del día', () => { /* ... */ });
+      it('sube de nivel cuando el XP alcanza el umbral', () => { /* ... */ });
+    });
+    ```
+-   **Trazabilidad:** Cada bloque `describe` empieza con el ID de la historia (`US-XXX`). Cada `it` corresponde a un Criterio de Aceptación.
+-   **Datos de prueba:** Usar factories/fixtures deterministas; nunca depender de datos reales de producción.
+
+### 6.5 Cobertura y Gates de Calidad
+-   **Umbral mínimo de cobertura:** 80% en `statements`, `branches`, `functions` y `lines` para la lógica de negocio (`src/services`, `src/store`, `src/utils`).
+-   **Gate de CI:** El pipeline de CI/CD (GitHub Actions) ejecuta `npm test` y bloquea el merge si algún test falla o la cobertura cae por debajo del umbral.
+-   **Definición de "Hecho" (DoD):** Una historia está *Completada* solo si: (1) todos sus tests pasan, (2) se cumple el umbral de cobertura, y (3) el estado se actualiza en `docs/user-stories/`.
+
+### 6.6 Creación de Tests Basados en Historias de Usuario
+Este es el **entregable de testing obligatorio del proyecto**: existe una suite de tests que cubre **todas** las historias de usuario del MVP (`US-001` a `US-013`). El mapeo historia → tests se documenta y mantiene en **`docs/testing/`**:
+
+-   `docs/testing/README.md` — Estrategia de testing y guía TDD.
+-   `docs/testing/test-matrix.md` — Matriz de trazabilidad: cada `US-XXX` → sus Criterios de Aceptación → casos de prueba (con ID `T-XXX`) → nivel (unit/integración/E2E) → estado.
+
+**Flujo para cada historia de usuario:**
+1.  Leer la ficha `US-XXX.md` y sus Criterios de Aceptación.
+2.  Registrar los casos de prueba correspondientes en `docs/testing/test-matrix.md`.
+3.  Escribir los tests (🔴 Red) antes del código de la funcionalidad.
+4.  Implementar hasta que pasen (🟢 Green) y refactorizar (🔵).
+5.  Actualizar el estado en la matriz y en la ficha de la historia.
+
+### 6.7 Estructura de Testing (Project Structure)
+```
+MODOYO/
+├── docs/testing/
+│   ├── README.md              ← Estrategia y guía TDD
+│   └── test-matrix.md         ← Trazabilidad US → tests
+├── src/
+│   ├── **/__tests__/*.test.ts ← Unit / integración / componente
+│   └── ...
+├── e2e/                        ← Flujos end-to-end
+├── jest.config.js
+└── jest.setup.ts
+```
+
 ---
 
 *This document is part of the MODO YO project context and should be updated as the SDLC process evolves.*

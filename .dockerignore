@@ -1,0 +1,12 @@
+node_modules
+dist
+.expo
+.git
+.env
+.env.*
+!.env.example
+npm-debug.log
+*.log
+coverage
+docs/**/*.pdf
+docs/**/*.docx

@@ -6,8 +6,10 @@
 
 - `docs/blueprint.md` — Blueprint completo del proyecto (20 secciones)
 - `docs/SDLC.md` — Marco de trabajo de desarrollo
+- `docs/ux-specification.md` — Especificación completa de UX/UI
 - `docs/user-stories/` — Historias de usuario (IDs: US-001, US-002, ...)
 - `docs/decisions/` — Registro de decisiones de arquitectura (ADRs)
+- `docs/wireframes/` — Maquetas y flujos visuales del MVP
 
 ## Instrucción para Agentes
 

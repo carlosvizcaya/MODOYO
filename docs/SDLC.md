@@ -63,6 +63,7 @@ All functional requirements must be tracked using unique IDs to facilitate clear
 -   **User Stories**: `US-XXX` (e.g., `US-001`, `US-002`)
 -   **Tasks**: `T-XXX` (e.g., `T-001`, `T-002`)
 -   **Bugs**: `B-XXX` (e.g., `B-001`, `B-002`)
+-   **Architectural Decision Records**: `ADR-XXX` (e.g., `ADR-001`, `ADR-002`)
 
 ### Example User Story
 **ID**: `US-001`
@@ -73,6 +74,58 @@ All functional requirements must be tracked using unique IDs to facilitate clear
 -   Password must be at least 8 characters.
 -   Success message is displayed upon registration.
 
+## 5. Architectural Decision Records (ADRs)
+
+Toda decisión de arquitectura significativa (elección de tecnología, patrón, o trade-off relevante) debe documentarse como un **ADR** en `docs/decisions/`. Los ADRs preservan el *porqué* de las decisiones para que agentes y desarrolladores futuros no las reabran sin contexto.
+
+### Principios
+-   **Un ADR por decisión**, con ID único `ADR-XXX`.
+-   **Inmutabilidad**: una vez *Aceptado*, un ADR no se edita. Si la decisión cambia, se crea un ADR nuevo que lo reemplaza y el anterior se marca como *Obsoleto* (indicando cuál lo sustituye).
+-   **Trazabilidad**: los ADRs se referencian en User Stories y commits cuando aplican (ej. `feat: implement US-001 (ADR-002 privacy)`).
+
+### Estados
+-   **Propuesto** — en discusión, aún no adoptado.
+-   **Aceptado** — decisión vigente y en aplicación.
+-   **Rechazado** — evaluado y descartado.
+-   **Obsoleto** — reemplazado por una decisión posterior.
+
+### ADR Template
+```markdown
+# ADR-XXX: [Título de la Decisión]
+
+**Estado:** Propuesto | Aceptado | Rechazado | Obsoleto
+**Fecha:** YYYY-MM-DD
+**Autores:** [Nombre/Equipo]
+**User Stories relacionadas:** [US-XXX, US-XXX]
+
+## Contexto y Problema
+[¿Qué problema resuelve esta decisión? ¿Qué fuerzas/restricciones aplican?]
+
+## Alternativas Consideradas
+1. **Opción A** — Pros / Contras
+2. **Opción B (elegida)** — Pros / Contras
+3. **Opción C** — Pros / Contras
+
+## Decisión
+[Qué se eligió y por qué.]
+
+## Consecuencias
+- **Positivas:** [...]
+- **Negativas/Riesgos:** [...]
+- **Mitigaciones:** [...]
+
+## Notas Técnicas
+- [Detalles de implementación, dependencias, configuración.]
+```
+
+### Ejemplo de ADR
+**ID**: `ADR-001`
+**Título**: Uso de Supabase como Backend-as-a-Service
+**Estado**: Aceptado
+**Decisión**: Se adopta Supabase (Auth + PostgreSQL + Storage + Edge Functions) por su base relacional nativa y soporte de Row Level Security para la privacidad dual del producto.
+
+> El registro completo de ADRs vive en `docs/decisions/` con su índice en `docs/decisions/README.md`.
+
 ---
 
-*This document is part of the "Santi y amigos" project context and should be updated as the SDLC process evolves.*
+*This document is part of the MODO YO project context and should be updated as the SDLC process evolves.*
